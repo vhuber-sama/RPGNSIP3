@@ -1,0 +1,99 @@
+LORE:
+
+Fantasy based 
+D&D / rpg oriented
+
+	On est un mercenaire, appartenant à la guilde des aventuriers (système classique, rang F → S, on commence rang D pour skip les 'va chercher le chat de la dame'). On commence dans la taverne
+	du village (qui sert de branche de la guilde), et on est envoyé faire une escorte pour récolter des plantes, on tombe sur des gobelins, fight tutoriel (100% scripté) on gagne, loot un item de 
+	classe + 1 item de soin (pour apprendre comment se heal). On entre ensuite dans une partie "plus libre" (en réalité on finit toujours aux mêmes points importants, juste pas le même chemin) en 
+	choisissant une quête parmi plusieurs proposées. On continue sur la quête choisie qui nous envoie dans une nouvelle zone, où on doit xp en faisant des quêtes et en se battant (X lvl = +1 grade
+	→ lvl 1→5:D,5→10: C,25 lvl : B lvl 50: A, lvl 75: S). On accumule des ressources au fur à mesure (loot, achat à des marchands dans une ville) et on upgrade, au fur a mesure les quêtes de 
+	notre niveau (donc proposées) sont de plus en plus dures et importantes (ex: rang D va chercher des herbes dans la foret, rang B va enquêter sur les orcs dans la forêt profonde, S va aider à 	
+	buter ce dragon). à la fin (quand on atteint un certain niveau d'xp), on doit aller se battre contre une grande menace (invasion de démons/ arrivée d'un dieu chaotic evil sur terre/ dragons 
+	qui pètent un câble) et on sauve le monde (ou pas)(ending final à la Outer Wilds ? (si vous connaissez pas soit prenez 20-30h faites le jeu il est bien ou demandez moi j'explique (spoil 
+	dcp)))(En gros tu dois mettre en jeu un truc super important qui kill ta save si tu meurs)(se référer à la vidéo "22 minutes pour sauver l'univers" de TheGreatReview).
+	
+Databases & systems:
+
+Joueur:
+	-id
+	-hp
+	-lvl
+	-stats
+		-strength
+		-agility
+		-dexterity
+		-charisma
+		-intelligence
+		-stamina
+	-réputation
+	-monnaie
+	
+Inventaire:
+	-id_item
+	-id_joueur
+	-équipé (y/n)
+	-quantité
+	
+zone:
+	-niveau_nécessaire
+	-type
+	-nom
+	-type_monstres
+	
+Monstre:
+	-id
+	-niveau
+	-hp
+	-stats
+	
+Item:
+	-id
+	-durabilité
+	-effet
+	-type
+	-valeur_shop (shop vendent plus cher qu'ils n'achètent)
+	-valeur_vente
+
+PNJ:
+	-id
+	-Nom (on casera des refs a chaque nom pour être tranquille)
+	-espece
+	-sexe
+	-interaction possible (quête donnée / exemple)
+	
+Marchand:
+	-id_pnj
+	-id_item_1
+	-id_item_2
+	-id_item_3
+	-id_item_4
+	-id_item_4
+
+Quêtes:
+
+à voir comment on fait mais ca pourrait être: 
+	-id_quête
+	-id_pnj
+	-xp_récompense
+	-id_item_recompense
+
+
+
+Combat:
+	-tour par tour
+	-choix d'une action selon capacités disponibles (spells de base + item équipé)
+	-éxécution de l'action avec un "lancer de dé" (random.randint)
+	-effet de l'action selon le taux de réussite 
+	-tour suivant
+	
+Actions hors combat:
+	-choix de la direction à prendre
+	-interactions avec les pnj
+	-gestion du personnage
+	-gestion des quêtes
+	-système de craft avec des ressources ? (si vraiment on a le temps)
+	-menu de sauvegarde 
+	
+		
+Aller hop , 100 lignes!	
