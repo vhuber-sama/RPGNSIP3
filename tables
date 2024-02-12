@@ -26,22 +26,22 @@ c.execute("""
     """) #dict?
 
 c.execute("""
-    CREATE TABLE IF NOT EXISTS zone (
-    type TEXT,
-	nom TEXT,
-	niveau_recommande INT,
-	type_monstre TEXT
-    );
-    """)
-
-c.execute("""
     CREATE TABLE IF NOT EXISTS monstre (
     id_monstre INTEGER PRIMARY KEY,
 	niveau INT,
 	hp INT,
 	stats DICT,
-	type TEXT,
-	FOREIGN KEY (type) REFERENCES zone (type_monstre)
+	type TEXT
+    );
+    """)
+
+c.execute("""
+    CREATE TABLE IF NOT EXISTS zone (
+    type TEXT,
+	nom TEXT,
+	niveau_recommande INT,
+	type_monstre TEXT,
+    FOREIGN KEY (type_monstre) REFERENCES monstre (type)
     );
     """)
 
