@@ -82,6 +82,7 @@ c.execute("""
     CREATE TABLE IF NOT EXISTS quete (
     id_quete INTEGER PRIMARY KEY,
 	id_pnj INT,
+	description TEXT,
 	FOREIGN KEY (id_pnj) REFERENCES pnj (id_pnj)
     );
     """)
