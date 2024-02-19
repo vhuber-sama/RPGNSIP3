@@ -13,26 +13,22 @@ height = 960
 screen = pg.display.set_mode((width,height),vsync=1) #creates the screen object
 
 current_location = "Mr. Maurice"
-cl_type = "town"
+cl_type = "village"
 chara_name = "Valentin"
 
-texte_tuto = f"Bonjour {chara_name}, bienvenue au {cl_type} de {current_location}! Comme à votre habitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez.; Une fois accoutumé au changement de lumière et au brouhaha ambiant, vous allez au comptoir, où l'hôtesse vous salue :;'Bonsoir, {chara_name}. Bon retour, vous tombez à pic! Une quête vient juste d'arriver,elle sera parfaite pour vous.';'Bren, l'alchimiste qui vit à l'orée de la forêt veut aller cueillir des plantes médicinales pour ses potions, et il demande que quelqu'un l'escorte';'Il ne se passera probablement rien et au pire des cas, vous avez ce qu'il faut pour défaire les éventuelles menaces';'La récompense est de 50 pièces de bronze et une potion de soin.';change_zone;'Bonjour, vous devez être {chara_name}? Enchanté, je suis Bren. Merci d'avoir accepté de m'accompagner, ne perdons pas plus de temps, allons-y!';change_zone;*Alors que vous vous êtes enfoncé dans la forêt, des gobelins apparaissent*;combat;'Par Médelín, j'ai bien cru que tout cela allait mal se finir! Heureusement que vous étiez là, sinon je n'aurais pas donné cher de ma peau...';'Mais vous êtes blessé! Attendez, si je mélange ces plantes... Tenez, une potion de soin!';*Cliquez sur Inventaire, puis sur un objet utilisable pour l'utiliser*;*Une fois Bren satisfait de sa cueillette, vous le raccompagnez chez lui, puis retournez à la guilde*;'Bon retour {chara_name}, on m'a informée que vous aviez accompli votre quête avec succès!';'Voici votre récompense' +50 pièces de bronze, +1 potion de soin mineure"
-
+texte_tuto = f"Bonjour {chara_name}, bienvenue au {cl_type} de {current_location}! Comme à votre habitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez.; Une fois accoutumé au changement de lumière et au brouhaha ambiant, vous allez au comptoir, où l'hôtesse vous salue :;'Bonsoir, {chara_name}. Bon retour, vous tombez à pic! Une quête vient juste d'arriver,elle sera parfaite pour vous.';'Bren, l'alchimiste qui vit à l'orée de la forêt veut aller cueillir des plantes médicinales pour ses potions, et il demande que quelqu'un l'escorte';'Il ne se passera probablement rien et au pire des cas, vous avez ce qu'il faut pour défaire les éventuelles menaces';'La récompense est de 50 pièces de bronze et une potion de soin.';change_zone;'Bonjour, vous devez être {chara_name}? Enchanté, je suis Bren. Merci d'avoir accepté de m'accompagner, ne perdons pas plus de temps, allons-y!';change_zone;*Alors que vous vous êtes enfoncé dans la forêt, des gobelins apparaissent*;combat;'Par Médelín, j'ai bien cru que tout cela allait mal se finir! Heureusement que vous étiez là, sinon je n'aurais pas donné cher de ma peau...';'Mais vous êtes blessé! Attendez, si je mélange ces plantes... Tenez, une potion de soin!';*Cliquez sur Inventaire, puis sur un objet utilisable pour l'utiliser*;*Une fois Bren satisfait de sa cueillette, vous le raccompagnez chez lui, puis retournez à la guilde*; Bon retour {chara_name}, on m a informée que vous aviez accompli votre quête avec succès!;Voici votre récompense +50 pièces de bronze, +1 potion de soin mineure"
 
 def adapte_texte(text):
-    split_tuto = texte_tuto.split(';')
+    split_tuto = text.split(';')
     i = 0
-    #print(len(split_tuto))
-    #print(split_tuto)
+    
     while i < len(split_tuto):
-        #print(i,len(split_tuto))
         text_tuto = []
         
         if len(split_tuto[i]) > 70:
             
             first_part = split_tuto[i][:70]
-            second_part = split_tuto[i][70:]
-            
+            second_part = split_tuto[i][70:]    
             text_tuto.append(first_part)
             text_tuto.append(second_part)
             split_tuto.pop(i)
@@ -46,6 +42,7 @@ def adapte_texte(text):
 
     return split_tuto
 
+"""
 def adapte_texte_v2(text):
     split_text = text.split(";")
     splitted = []
@@ -71,8 +68,24 @@ def adapte_texte_v2(text):
 
     print(new_list)
     
+"""
 
-adapte_texte_v2(texte_tuto)
+def adapte_text_v3(texte , nchar):
+    texte = texte.split(';')
+    for t in texte:
+        mots = t.split()
+        ttl_len = 0
+        i = 0
+        liste_good = []
+        while ttl_len < nchar and i < len(mots):
+            ttl_len += len(mots[i])+1
+            liste_good.append(' '+mots[i])
+            i += 1
+
+    return liste_good
+
+print(adapte_text_v3(texte_tuto, 70))
+#adapte_texte_v2(texte_tuto)
 rnumtown = rd(1,2)
 rnumins = rd(1,3)
 
@@ -129,4 +142,4 @@ def run_game():
 #run_game()
         
 #print(adapte_texte(texte_tuto))
-#print(len(" Bonjour Valentin, bienvenue au town de Mr. Maurice! Comme à votre habitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez."))
+#print(len("abitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez."))
