@@ -50,23 +50,24 @@ def adapte_texte_v2(text):
     split_text = text.split(";")
     splitted = []
     for i in range(len(split_text)):
-        splitted.append(split_text[i].split())
+        mot=split_text[i].split()
+        for j in range(len(mot)):
+            splitted.append(mot[j])
+            splitted.append(" ")
     new_list = []
     print(splitted)
-    
-    for e in splitted:
-        if len(e) > 75:
-            txt_to_apnd = ""
-            i = 0
-            while len(txt_to_apnd) < 70:
-                txt_to_apnd = txt_to_apnd + ' ' + e[i]
-                i += 1
-            new_list.append(txt_to_apnd)
-        else:
-            txt_to_apnd = ""
-            for i in range(len(e)):
-                txt_to_apnd = txt_to_apnd + ' ' + e[i]
-            new_list.append(txt_to_apnd)
+    e=0
+
+    while len(splitted)-e>75:
+        e+=75
+        texte=""
+        for i in range(e):
+            texte+=splitted[i]
+        new_list.append(texte)
+    texte=""
+    for i in range(len(splitted)-e):
+        texte+=splitted[i]
+    new_list.append(texte)
 
     print(new_list)
     
