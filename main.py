@@ -177,7 +177,7 @@ class Button:
     
     def show_button(self,surface : pg.display):
         self.text = pg.font.SysFont("Times New Roman",32)
-        surface.blit(self.text.render(self.btn_text,1,(255,255,255),(255,0,0)),(self.xpos,self.ypos))
+        surface.blit(self.text.render(self.btn_text,1,(255,255,255),(0,0,0)),(self.xpos,self.ypos))
 
     
 
