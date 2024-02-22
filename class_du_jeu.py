@@ -254,7 +254,9 @@ class Quete:
         descr = c.fetchall()
         return descr
 
-
+def create_joueur(id, hp, xp, nv, stats, reput, monnaie, gway):
+    p = "INSERT INTO joueur VALUES ('" + id + "','" + hp + "','" + xp + "','" + nv + "','" + stats + "','" + reput + "','" + monnaie + "','" + gway + "')"
+    c.executescript(p)
 
 
 
