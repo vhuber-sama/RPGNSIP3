@@ -15,8 +15,9 @@ c = connexion.cursor()
 c.execute("""
     CREATE TABLE IF NOT EXISTS joueur (
     id_joueur INTEGER PRIMARY KEY,
-    espece TEXT,
     nom TEXT,
+    espece TEXT,
+    classe TEXT,
     hp FLOAT,
     xp FLOAT,
     niveau INT,
@@ -28,7 +29,9 @@ c.execute("""
     endurance INT,
     reputation INT,
     monnaie INT,
-    gway BOOLEAN
+    current_zone INT,
+    gway BOOLEAN,
+    FOREIGN KEY (current_zone) REFERENCES zone(id_zone)
     );
     """) #dict?
 
@@ -47,7 +50,12 @@ c.execute("""
     id_monstre INTEGER PRIMARY KEY,
 	niveau INT,
 	hp INT,
-	stats DICT,
+	force INT,
+    agilite INT,
+    charisme INT,
+    dexterite INT,
+    intelligence INT,
+    endurance INT,
 	type TEXT,
 	FOREIGN KEY (type) REFERENCES zone (type_monstre)
     );
@@ -56,7 +64,7 @@ c.execute("""
 c.execute("""
     CREATE TABLE IF NOT EXISTS items (
     id_items INTEGER PRIMARY KEY,
-    durabilité TEXT,
+    durabilite TEXT,
     effets TEXT,
     type TEXT,
     valeur_shop INT,
