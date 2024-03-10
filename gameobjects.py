@@ -14,6 +14,10 @@ class Toolbox:
     def set(valeur_to_upd, new_val, val_cle, val_id):
         c.execute(f"UPDATE joueur SET {valeur_to_upd} = {new_val} WHERE {val_cle} = {val_id}")
 
+    @staticmethod
+    def link(table,prim_key,id):
+        c.execute(f"SELECT * FROM {table} WHERE {prim_key} = {id}")
+        return c.fetchall()
 
 class Joueur(Toolbox):
     def __init__(self,id_joueur):
@@ -33,12 +37,14 @@ class Joueur(Toolbox):
         self.monnaie = self.get("monnaie","joueur","id_joueur",self.id_joueur)
         self.gway = False
         self.zone = self.get("current_zone","joueur","id_joueur",self.id_joueur)
+        self.zone_infos = self.link("zone","zone.id",self.zone)
 
-    def link_zone(self):
-        ...#A FAIRE: JOIN zone ON self.current_zone == zone.id
     
-    def change_zone(self):
-        ...
+
+    def change_zone(self,new_zone):
+        self.zone = new_zone
+        self.zone_infos = self.link("zone","zone.id",self.zone)
+
 
 
 class Monstre(Toolbox):
