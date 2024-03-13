@@ -14,6 +14,12 @@ class DBtools:
     def create_zone(self,id,type,nom,nv_rcmd,type_monstre):
         self.c.execute(f"""INSERT INTO zone VALUES ({id},"{type}","{nom}",{nv_rcmd},"{type_monstre}");""")
         self.connexion.commit()
+
+    def insert_items(self):
+    with open('items.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            c.execute('''INSERT INTO items VALUES (?,?,?,?,?,?)''', row)
         
 tools = DBtools()
 
