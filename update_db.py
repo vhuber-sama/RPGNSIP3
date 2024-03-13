@@ -21,6 +21,30 @@ class DBtools:
         for row in reader:
             c.execute('''INSERT INTO items VALUES (?,?,?,?,?,?)''', row)
         
+    def insert_pnj(self):
+    with open('pnj.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            c.execute('''INSERT INTO items VALUES (?,?,?,?,?)''', row)
+
+    def insert_quete(self):
+    with open('quete.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            c.execute('''INSERT INTO items VALUES (?,?,?)''', row)
+
+    def insert_zone(self):
+    with open('zone.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            c.execute('''INSERT INTO items VALUES (?,?,?,?)''', row)
+            
+    def insert_monstre(self):
+    with open('monstre.csv', 'r') as file:
+        reader = csv.reader(file, delimiter=';')
+        for row in reader:
+            c.execute('''INSERT INTO items VALUES (?,?,?,?,?)''', row)
+
 tools = DBtools()
 
 tools.create_zone(1,'village','Carvinghall',0,'None')
