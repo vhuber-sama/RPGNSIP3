@@ -64,7 +64,7 @@ c.execute("""
 c.execute("""
     CREATE TABLE IF NOT EXISTS items (
     id_items INTEGER PRIMARY KEY,
-    durabilite TEXT,
+    durabilite INT,
     effets TEXT,
     type TEXT,
     valeur_shop INT,
