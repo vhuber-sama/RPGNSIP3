@@ -58,8 +58,10 @@ class Joueur(Toolbox):
                 monsters[0].hp -= self.stats['STR']%randint(1,20)
                 if monsters[0].hp <= 0:
                     monsters.pop(0)
+                is_playturn = False
             elif not is_playturn:
                 self.hp -= monsters[0].stats['STR']%randint(1,20)
+                is_playturn = True
 
 
 
