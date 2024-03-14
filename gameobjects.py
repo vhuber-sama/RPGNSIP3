@@ -45,6 +45,23 @@ class Joueur(Toolbox):
         self.zone = new_zone
         self.zone_infos = self.link("zone","zone.id",self.zone)
 
+    def set_action(self,action):
+        self.action = action
+
+    def combat(self,monsters : list):
+        for e in monsters:
+            assert type(e) == Monstre
+
+        is_playturn = True
+        while self.hp >= 0 and len(monsters)>0:
+            if is_playturn and self.action == 'attack':
+                monsters[0].hp -= self.stats['STR']%randint(1,20)
+                if monsters[0].hp <= 0:
+                    monsters.pop(0)
+            elif not is_playturn:
+                self.hp -= monsters[0].stats['STR']%randint(1,20)
+
+
 
 
 class Monstre(Toolbox):
