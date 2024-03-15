@@ -54,16 +54,23 @@ class Joueur(Toolbox):
 
         is_playturn = True
         while self.hp >= 0 and len(monsters)>0:
+            #print(f"fight: player hp: {self.hp}, monster hp: {monsters[0].hp}")
             if is_playturn and self.action == 'attack':
-                monsters[0].hp -= self.stats['STR']%randint(1,20)
+                diceroll = randint(1,20)
+                monsters[0].hp -= self.stats['STR']*(0.1*diceroll)
+                print(f"You rolled a {diceroll}, dealing {self.stats['STR']*(0.1*diceroll)} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
                 if monsters[0].hp <= 0:
+                    print(f"you killed a {monsters[0].espece}")
                     monsters.pop(0)
+                    
                 is_playturn = False
             elif not is_playturn:
-                self.hp -= monsters[0].stats['STR']%randint(1,20)
+                diceroll = randint(1,20)
+                self.hp -= monsters[0].stats['STR']*(0.1*diceroll)
+                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {monsters[0].stats['STR']*(0.1*diceroll)} damage to you, lowering your hp to: {self.hp}")
+                if self.hp <= 0:
+                    print("You died")
                 is_playturn = True
-
-
 
 
 class Monstre(Toolbox):
