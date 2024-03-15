@@ -1,4 +1,5 @@
 import sqlite3
+from random import randint
 connexion = sqlite3.connect('nom.db')
 c = connexion.cursor()
 
@@ -11,14 +12,23 @@ class Toolbox:
         return result[0][0]
     
     @staticmethod
-    def set(valeur_to_upd, new_val, val_cle, val_id):
-        c.execute(f"UPDATE joueur SET {valeur_to_upd} = {new_val} WHERE {val_cle} = {val_id}")
-
+    def set(table,valeur_to_upd, new_val, val_cle, val_id):
+        print(f"UPDATE {table} SET {valeur_to_upd} = {new_val} WHERE {val_cle} = {val_id}")
+        c.execute(f"UPDATE {table} SET {valeur_to_upd} = {new_val} WHERE {val_cle} = {val_id}")
+        connexion.commit()
     @staticmethod
     def link(table,prim_key,id):
         c.execute(f"SELECT * FROM {table} WHERE {prim_key} = {id}")
         return c.fetchall()
-
+    
+    @staticmethod
+    def get_last_id(table):
+        if table != 'zone':
+            c.execute(f"SELECT MAX(id_{table}) FROM {table}")
+        else:
+            c.execute(f"SELECT MAX(id) FROM {table}")
+        return c.fetchall()[0][0]
+    
 class Joueur(Toolbox):
     def __init__(self,id_joueur):
         self.id_joueur = id_joueur
@@ -38,6 +48,7 @@ class Joueur(Toolbox):
         self.gway = False
         self.zone = self.get("current_zone","joueur","id_joueur",self.id_joueur)
         self.zone_infos = self.link("zone","zone.id",self.zone)
+        self.inventaire = Inventaire(self.id_joueur)
 
     
 
@@ -73,11 +84,11 @@ class Joueur(Toolbox):
                 is_playturn = True
 
 
-
 class Monstre(Toolbox):
     def __init__(self,id_monstre):
         self.id_monstre = id_monstre
         self.niveau = self.get("niveau","monstre","id_monstre",self.id_monstre)
+        self.espece = self.get("espece","monstre","id_monstre",self.id_monstre)
         self.hp = self.get("hp","monstre","id_monstre",self.id_monstre)
         self.stats = {'STR' : self.get("force","monstre","id_monstre",self.id_monstre),
                       'AGI' : self.get("agilite","monstre","id_monstre",self.id_monstre),
@@ -102,10 +113,10 @@ class Item(Toolbox):
     def __init__(self,id_item):
         self.id_item = id_item
         self.durab = self.get("durabilite","items","id_items",self.id_item)
-        self.eff = self.get("effet","items","id_items",self.id_item)
+        self.eff = self.get("effets","items","id_items",self.id_item)
         self.type = self.get("type","items","id_items",self.id_item)
-        self.val_shop = self.get("val_shop","items","id_items",self.id_item)
-        self.val_vente = self.get("val_vente","items","id_items",self.id_item)
+        self.val_shop = self.get("valeur_shop","items","id_items",self.id_item)
+        self.val_vente = self.get("valeur_vente","items","id_items",self.id_item)
 
     
 class Inventaire(Toolbox):
@@ -128,8 +139,7 @@ class Inventaire(Toolbox):
 
     def is_equiped(self,id_item):
         return id_item in self.equipe.keys()
-
-
+        
 class PNJ(Toolbox):
     def __init__(self,id_pnj):
         self.id_pnj = id_pnj
@@ -146,3 +156,11 @@ class Quete(Toolbox):
         self.id_pnj = self.get("pnj","quete","id_quete",self.id_quete)
         self.description = self.get("description_quete","quete","id_quete",self.id_quete)
 
+tool = Toolbox()
+#print(tool.get_last_id("joueur"))
+#tool.set('joueur','current_zone',0,'id_joueur',0)
+"""
+player = Joueur(0)
+player.set_action("attack")
+player.combat([Monstre(0)])
+#print(player.hp)"""
