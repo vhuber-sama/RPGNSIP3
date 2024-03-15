@@ -57,20 +57,21 @@ class Joueur(Toolbox):
             #print(f"fight: player hp: {self.hp}, monster hp: {monsters[0].hp}")
             if is_playturn and self.action == 'attack':
                 diceroll = randint(1,20)
-                monsters[0].hp -= self.stats['STR']*(0.1*diceroll)
-                print(f"You rolled a {diceroll}, dealing {self.stats['STR']*(0.1*diceroll)} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
+                monsters[0].hp -= int((self.stats['STR']+eval(Item(self.inventaire.id_items[0]).eff))*(0.1*diceroll))
+                print(f"You rolled a {diceroll}, dealing {int((self.stats['STR']+eval(Item(self.inventaire.id_items[0]).eff))*(0.1*diceroll))} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
                 if monsters[0].hp <= 0:
                     print(f"you killed a {monsters[0].espece}")
                     monsters.pop(0)
-                    
                 is_playturn = False
+
             elif not is_playturn:
                 diceroll = randint(1,20)
-                self.hp -= monsters[0].stats['STR']*(0.1*diceroll)
-                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {monsters[0].stats['STR']*(0.1*diceroll)} damage to you, lowering your hp to: {self.hp}")
+                self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
                 if self.hp <= 0:
                     print("You died")
                 is_playturn = True
+
 
 
 class Monstre(Toolbox):
@@ -107,28 +108,26 @@ class Item(Toolbox):
         self.val_vente = self.get("val_vente","items","id_items",self.id_item)
 
     
-class Inventaire:
+class Inventaire(Toolbox):
     def __init__(self,id_joueur):
         self.id_joueur = id_joueur
-        self.id_items = []
+        self.id_items = [self.get('id_items','inventaire','id_joueur',self.id_joueur)]
         self.qt = {}
         self.equipe = {}
 
-
-    def get_items(self):
-        c.execute("SELECT id_items FROM items WHERE id_joueur ="+self.id_joueur)
-        self.id_items.append(c.fetchall())
-
     def get_qt(self):
         for i in range(len(self.id_items)):
-            c.execute("SELECT quantité FROM items WHERE id_joueur ="+self.id_joueur+" AND id_items="+self.id_items[i])
+            c.execute(f"SELECT quantité FROM inventaire WHERE id_joueur ={self.id_joueur} AND id_items={self.id_items[i]}")
             self.qt[self.id_items[i]]=c.fetchall()
 
 
     def get_equipe(self):
         for i in range(len(self.id_items)):
-            c.execute("SELECT equipe FROM items WHERE id_joueur ="+self.id_joueur+" AND id_items="+self.id_items[i])
+            c.execute(f"SELECT equipe FROM inventaire WHERE id_joueur ={self.id_joueur} AND id_items={self.id_items[i]}")
             self.equipe[self.id_items[i]]=c.fetchall()
+
+    def is_equiped(self,id_item):
+        return id_item in self.equipe.keys()
 
 
 class PNJ(Toolbox):
