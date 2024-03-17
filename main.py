@@ -16,7 +16,10 @@ pg.font.init()
 class Jeu:
 
     def __init__(self,player,width,height):
-            
+        """
+        A class for the different elements that keep the game running
+        """            
+        #screen related stuff
         self.w = width
         self.h = height
         self.halfline = height//2
@@ -24,6 +27,7 @@ class Jeu:
         
         self.clock = pg.time.Clock()
 
+        #So that the font changes wether you are on Windows or on a Linux distro 
         if os.name == "nt":
             self.font = pg.font.SysFont("Times New Roman",32)
             self.ttl_font = pg.font.SysFont("MV Boli", 48)
@@ -37,12 +41,14 @@ class Jeu:
         
         self.texte_tuto = f"Bonjour {player.nom}, bienvenue au {self.cl_type} de {self.current_location}! Comme à votre habitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez.; Une fois accoutumé au changement de lumière et au brouhaha ambiant, vous allez au comptoir, où l'hôtesse vous salue :;'Bonsoir, {player.nom}. Bon retour, vous tombez à pic! Une quête vient juste d'arriver,elle sera parfaite pour vous.';'Bren, l'alchimiste qui vit à l'orée de la forêt veut aller cueillir des plantes médicinales pour ses potions, et il demande que quelqu'un l'escorte';'Il ne se passera probablement rien et au pire des cas, vous avez ce qu'il faut pour défaire les éventuelles menaces';'La récompense est de 50 pièces de bronze et une potion de soin.';change_zone;'Bonjour, vous devez être {player.nom}? Enchanté, je suis Bren. Merci d'avoir accepté de m'accompagner, ne perdons pas plus de temps, allons-y!';change_zone;*Alors que vous vous êtes enfoncé dans la forêt, des gobelins apparaissent*;combat;'Par Médelín, j'ai bien cru que tout cela allait mal se finir! Heureusement que vous étiez là, sinon je n'aurais pas donné cher de ma peau...';'Mais vous êtes blessé! Attendez, si je mélange ces plantes... Tenez, une potion de soin!';*Cliquez sur Inventaire, puis sur un objet utilisable pour l'utiliser*;*Une fois Bren satisfait de sa cueillette, vous le raccompagnez chez lui, puis retournez à la guilde*; Bon retour {player.nom}, on m a informée que vous aviez accompli votre quête avec succès!;Voici votre récompense +50 pièces de bronze, +1 potion de soin mineure"
         self.text_to_show = self.adapte_text_v3(self.texte_tuto,65)
+        #UI related stuff
         
-        self.stats = []
-        
+        #Main page UI
         self.new_save_btn = Button(self.screen,self.w//2-125,self.halfline + 125,256,40,text="New save",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_n_s())
-        self.load_save_btn = Button( self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0))
+        self.load_save_btn = Button( self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0),onClick= lambda: self.load_save_ui())
         
+        #Character creation UI
+        self.stats = []
         self.chara_name = TextBox(self.screen,self.w//2-125,215, 500,40,font= self.font,textColour=(0,0,0),colour = (207,160,91))
         self.espece = Dropdown(self.screen,self.w//2-125,325,500,40,name="Select species",choices=['Humain','Elfe','Nain'],colour=(207,160,91),values = ['humain','elfe','nain'])
         self.classe = Dropdown(self.screen,self.w//2-125,425,500,40,name="Select class",choices=['Warrior','Ranger','Tank','Mage'],colour=(207,160,91),values = ['warrior','ranger','tank','mage'])        
@@ -56,11 +62,13 @@ class Jeu:
         self.dex_txt = TextBox(self.screen,self.halfline+200,625,60,40,colour=(207,160,91),font=self.font)
         self.int_txt = TextBox(self.screen,self.w//3,725,60,40,colour=(207,160,91),font=self.font)
         self.end_txt = TextBox(self.screen,self.halfline+200,725,60,40,colour=(207,160,91),font=self.font)
-        self.stat_btn = Button(self.screen,self.halfline-40,775,80,40,colour=(200,20,20),name= "Confirm stats",textColour = (255,255,255),onClick= lambda:self.choose_stats())
+        self.stat_btn = Button(self.screen,self.halfline-40,775,175,40,colour=(200,20,20),name= "Confirm stats",textColour = (255,255,255),onClick= lambda:self.choose_stats())
         self.create_btn = Button(self.screen,self.halfline-40,900,175,40,colour=(175,35,35),text="Create Character",textColour=(255,255,255),onClick= lambda: update_db.tools.create_player((Gameobjects.Toolbox.get_last_id('joueur')+1),self.args[0],self.args[1],self.args[2],10,0,1,self.stats[0],self.stats[1],self.stats[2],self.stats[3],self.stats[4],self.stats[5],0,0,0,False))
 
+        #Text UI
 
 
+        #Hiding the widgets so that they are only displayed if they should
         self.new_save_btn.hide()
         self.load_save_btn.hide()
 
@@ -113,27 +121,7 @@ class Jeu:
 
     #print(adapte_text_v3(texte_tuto, 65))
     #adapte_texte_v2(texte_tuto)
-
-
-    def show_ui(self,text_to_show,cl_type):
-    #======================================================#temp stuff for the sole purpose of showcasing idea#===========================================================#    
-        if "inside" in cl_type:
-            image = pg.image.load("./assets/pics_insides/auberge1.png")
-        if "village" in cl_type:
-            image = pg.image.load("./assets/pics_towns/town1.png")
         
-        pg.font.init()
-
-
-        self.text = pg.font.SysFont('Times New Roman',32)
-        
-        halfline = self.height//2 #allows to have the half of whatever the screen size is
-        
-        self.screen.blit(image,(0,0))
-        
-        for i in range(len(text_to_show[self.current_text])-1):
-            text_shown = self.text.render(text_to_show[self.current_text][i],True,(255,255,255))
-            self.screen.blit(text_shown,(15,halfline + 25+(i*50))) 
 
     def menu_ui(self):
         pg.font.init()
@@ -235,7 +223,32 @@ class Jeu:
         shown_end = self.font.render(endtxt,1,(255,255,255))
         self.screen.blit(shown_end,(self.halfline+40,725))
 
-        
+    def load_save_ui(self):
+        """
+        Une fonction qui permet de charger une partie existant déjà
+        Pour l'instant crée une liste avec les noms des différents personnages.
+        """
+        pg.font.init()
+        saves_list = []
+        saves_num = Gameobjects.Toolbox.get_last_id('joueur')
+        print(saves_num)
+        for i in range(saves_num+1):
+            print(saves_num,saves_num-i)
+            e = Gameobjects.Toolbox.get('nom','joueur','id_joueur',saves_num-i)
+            print(e)
+            saves_list.append(e)
+        print(saves_list)
+
+    def text_ui(self,text):
+        #Image part:
+        image = pg.image.load(f"./assets/pics_{player.zone_infos[1]}s/{player.zone_infos[1]}")
+
+        self.screen.blit(image,(0,0))
+        current_text  = 0
+        for i in range(len(text[current_text])-1):
+            text_shown = self.text.render(text[current_text][i],True,(255,255,255))
+            self.screen.blit(text_shown,(15,self.halfline + 25+(i*50))) 
+
 #============================================================================================================================================================#
 
     def run_game(self):
@@ -258,16 +271,8 @@ class Jeu:
             self.clock.tick(60)
                   
             quit_btn = Button(self.screen, 10, 890, 150, 70,text="Quit",textColour=(255,255,255),inactiveColour = (125,0,0),hoverColour= (255,0,0),onClick=lambda: pg.quit())
-            #quit_btn.draw()
 
-            #print(self.args)
-            
             pw.update(events)
-#            test_btn = Button("Test",450,890,70,150,self.screen)
-#            compteur = test_btn.check_clicked(compteur,1)
-#            test_btn.show_button()
-#            print(compteur)
-            
             #print(pg.mouse.get_pos()[0],pg.mouse.get_pos()[1])
 
             pg.display.update()
