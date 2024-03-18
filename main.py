@@ -15,7 +15,7 @@ pg.font.init()
 
 class Jeu:
 
-    def __init__(self,player,width,height):
+    def __init__(self,width,height):
         """
         A class for the different elements that keep the game running
         """            
@@ -36,16 +36,13 @@ class Jeu:
             self.ttl_font = pg.font.SysFont("Z003",68)
 
 
-        self.current_location = player.zone
-        self.cl_type = 'village'
+        self.player = None
         
-        self.texte_tuto = f"Bonjour {player.nom}, bienvenue au {self.cl_type} de {self.current_location}! Comme à votre habitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez.; Une fois accoutumé au changement de lumière et au brouhaha ambiant, vous allez au comptoir, où l'hôtesse vous salue :;'Bonsoir, {player.nom}. Bon retour, vous tombez à pic! Une quête vient juste d'arriver,elle sera parfaite pour vous.';'Bren, l'alchimiste qui vit à l'orée de la forêt veut aller cueillir des plantes médicinales pour ses potions, et il demande que quelqu'un l'escorte';'Il ne se passera probablement rien et au pire des cas, vous avez ce qu'il faut pour défaire les éventuelles menaces';'La récompense est de 50 pièces de bronze et une potion de soin.';change_zone;'Bonjour, vous devez être {player.nom}? Enchanté, je suis Bren. Merci d'avoir accepté de m'accompagner, ne perdons pas plus de temps, allons-y!';change_zone;*Alors que vous vous êtes enfoncé dans la forêt, des gobelins apparaissent*;combat;'Par Médelín, j'ai bien cru que tout cela allait mal se finir! Heureusement que vous étiez là, sinon je n'aurais pas donné cher de ma peau...';'Mais vous êtes blessé! Attendez, si je mélange ces plantes... Tenez, une potion de soin!';*Cliquez sur Inventaire, puis sur un objet utilisable pour l'utiliser*;*Une fois Bren satisfait de sa cueillette, vous le raccompagnez chez lui, puis retournez à la guilde*; Bon retour {player.nom}, on m a informée que vous aviez accompli votre quête avec succès!;Voici votre récompense +50 pièces de bronze, +1 potion de soin mineure"
-        self.text_to_show = self.adapte_text_v3(self.texte_tuto,65)
         #UI related stuff
         
         #Main page UI
-        self.new_save_btn = Button(self.screen,self.w//2-125,self.halfline + 125,256,40,text="New save",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_n_s())
-        self.load_save_btn = Button( self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0),onClick= lambda: self.load_save_ui())
+        self.new_save_btn = Button(self.screen,self.w//2-125,self.halfline + 125,256,40,text="New save",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.ns_widgets,self.new_save_ui()))
+        self.load_save_btn = Button( self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0),onClick= lambda: self.launch_new_win(self.ls_widgets,self.load_save_ui()))
         
         #Character creation UI
         self.stats = []
@@ -64,6 +61,16 @@ class Jeu:
         self.end_txt = TextBox(self.screen,self.halfline+200,725,60,40,colour=(207,160,91),font=self.font)
         self.stat_btn = Button(self.screen,self.halfline-40,775,175,40,colour=(200,20,20),name= "Confirm stats",textColour = (255,255,255),onClick= lambda:self.choose_stats())
         self.create_btn = Button(self.screen,self.halfline-40,900,175,40,colour=(175,35,35),text="Create Character",textColour=(255,255,255),onClick= lambda: update_db.tools.create_player((Gameobjects.Toolbox.get_last_id('joueur')+1),self.args[0],self.args[1],self.args[2],10,0,1,self.stats[0],self.stats[1],self.stats[2],self.stats[3],self.stats[4],self.stats[5],0,0,0,False))
+
+        #Load save UI
+
+        self.save1_btn = Button(self.screen,25,100,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),text= None ,onClick= lambda: print(self.save1_btn.text))
+        self.save2_btn = Button(self.screen,25,225,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70))
+        self.save3_btn = Button(self.screen,25,350,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70))
+        self.save4_btn = Button(self.screen,25,475,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70))
+        self.save5_btn = Button(self.screen,25,600,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70))
+        self.save6_btn = Button(self.screen,25,725,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70))
+        self.next_saves_btn = Button(self.screen,850,910,150,70,inactiveColour = (20,20,20), hoverColour = (70,70,70),text="Next",textColour=(255,255,255))
 
         #Text UI
 
@@ -87,9 +94,20 @@ class Jeu:
         self.create_btn.hide()
         
         
+        self.save1_btn.hide()
+        self.save2_btn.hide()
+        self.save3_btn.hide()
+        self.save4_btn.hide()
+        self.save5_btn.hide()
+        self.save6_btn.hide()
+        self.next_saves_btn.hide()
+
         self.args = []
         self.menu_widgets = [self.new_save_btn,self.load_save_btn]
         self.ns_widgets = [self.chara_name,self.espece,self.classe,self.spec_btn,self.cla_btn,self.create_btn,self.cla_btn,self.str_txt,self.agi_txt,self.cha_txt,self.dex_txt,self.int_txt,self.end_txt,self.stat_btn]
+        self.ls_widgets = [self.save1_btn,self.save2_btn,self.save3_btn,self.save4_btn,self.save5_btn,self.save6_btn]
+
+        self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets]
 
         self.ui = self.menu_ui()
         #self.quit_btn = Button(">Quit", 10, 890, 150, 70,self.screen)
@@ -117,11 +135,7 @@ class Jeu:
                 ttl_len = 0   
             liste_finale.append(liste_good)
         print('text_ready')
-        return liste_finale
-
-    #print(adapte_text_v3(texte_tuto, 65))
-    #adapte_texte_v2(texte_tuto)
-        
+        return liste_finale      
 
     def menu_ui(self):
         pg.font.init()
@@ -149,10 +163,15 @@ class Jeu:
         print(f'added{drop.getSelected()} to {self.args}')
         self.args.append(drop.getSelected())
     
-    def launch_n_s(self):
-        for e in self.menu_widgets:
-            e.hide()
-        self.ui = self.new_save_ui()
+    def launch_new_win(self,launched_list,launched):
+        for l in self.uis_list:
+            if l == launched_list:
+                pass
+            else:
+                for e in l:
+                    e.hide()
+                    print(f"hid {e}")
+        self.ui = launched
 
     def choose_stats(self):
         strength = int(self.str_txt.getText())
@@ -229,6 +248,9 @@ class Jeu:
         Pour l'instant crée une liste avec les noms des différents personnages.
         """
         pg.font.init()
+
+        self.screen.fill((0,0,0))
+        self.next_saves_btn.show()
         saves_list = []
         saves_num = Gameobjects.Toolbox.get_last_id('joueur')
         print(saves_num)
@@ -237,7 +259,17 @@ class Jeu:
             e = Gameobjects.Toolbox.get('nom','joueur','id_joueur',saves_num-i)
             print(e)
             saves_list.append(e)
+        
+        for e in self.ls_widgets:
+            e.show()
+            for i in range(6):
+                print(e , i)
+                if i < len(saves_list):
+                    print(f"e.text should be {saves_list[i]}")
+                    e.setText(saves_list[i])        
+                    e.draw()
         print(saves_list)
+
 
     def text_ui(self,text):
         #Image part:
@@ -262,8 +294,7 @@ class Jeu:
                     if event.type == pg.QUIT :#if we click on the cross to close the game
                         self.running = False #closes the loop that keeps the game running
                         pg.quit()
-                    if event.type == pg.MOUSEBUTTONDOWN:
-                        print(event)
+                
             if self.current_text >= 1:
                 self.cl_type = "inside"
 
@@ -280,7 +311,7 @@ class Jeu:
    
 player = Gameobjects.Joueur(0)
 
-jeu = Jeu(player,960,960)
+jeu = Jeu(960,960)
 jeu.run_game()
 print('Game terminated')
 
