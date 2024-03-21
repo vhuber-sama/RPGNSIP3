@@ -74,6 +74,12 @@ class Jeu:
 
         #Text UI
 
+        #Main UI
+        self.change_zone_btn = Button(self.screen,200,500,256,40,text="Change zone",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.cz_widgets,self.change_zone_ui())
+        self.combat_btn = Button(self.screen,560,500,256,40,text="Combat",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.c_widgets,self.combat_ui())
+        self.interact_btn = Button(self.screen,200,700,256,40,text="Interact",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.i_widgets,self.interact_ui())
+        self.inventory_btn = Button(self.screen,560,700,256,40,text="Inventory",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui())
+
 
         #Hiding the widgets so that they are only displayed if they should
         self.new_save_btn.hide()
@@ -102,10 +108,16 @@ class Jeu:
         self.save6_btn.hide()
         self.next_saves_btn.hide()
 
+        self.change_zone_btn.hide()
+        self.combat_btn.hide()
+        self.interact_btn.hide()
+        self.inventory_btn.hide()                          
+
         self.args = []
         self.menu_widgets = [self.new_save_btn,self.load_save_btn]
         self.ns_widgets = [self.chara_name,self.espece,self.classe,self.spec_btn,self.cla_btn,self.create_btn,self.cla_btn,self.str_txt,self.agi_txt,self.cha_txt,self.dex_txt,self.int_txt,self.end_txt,self.stat_btn]
         self.ls_widgets = [self.save1_btn,self.save2_btn,self.save3_btn,self.save4_btn,self.save5_btn,self.save6_btn]
+        self.main_widgets = [self.change_zone_btn,self.combat_btn,self.interact_btn,self.inventory_btn]
 
         self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets]
 
@@ -154,6 +166,17 @@ class Jeu:
         for e in self.menu_widgets:
             print("drawing ",e)
             e.show()
+
+    def main_ui(self):
+        pg.font.init()
+        
+        background=pg.image.load("image de fond")
+        
+        self.screen.blit(background,(0,0))
+
+        for e in self.main_widgets:
+            e.show()
+
 
     def txtbox_to_str(self,textbox,var):
         var = textbox.getText()
