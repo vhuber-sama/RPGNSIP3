@@ -75,10 +75,10 @@ class Jeu:
         #Text UI
 
         #Main UI
-        self.change_zone_btn = Button(self.screen,200,500,256,40,text="Change zone",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.cz_widgets,self.change_zone_ui())
-        self.combat_btn = Button(self.screen,560,500,256,40,text="Combat",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.c_widgets,self.combat_ui())
-        self.interact_btn = Button(self.screen,200,700,256,40,text="Interact",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.i_widgets,self.interact_ui())
-        self.inventory_btn = Button(self.screen,560,700,256,40,text="Inventory",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui())
+        self.change_zone_btn = Button(self.screen,120,500,400,100,text="Change zone",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.cz_widgets,self.change_zone_ui())
+        self.combat_btn = Button(self.screen,120,500,400,100,text="Combat",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.c_widgets,self.combat_ui())
+        self.interact_btn = Button(self.screen,200,700,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.i_widgets,self.interact_ui())
+        self.inventory_btn = Button(self.screen,560,700,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui())
 
 
         #Hiding the widgets so that they are only displayed if they should
