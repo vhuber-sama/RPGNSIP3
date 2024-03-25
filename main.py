@@ -64,14 +64,14 @@ class Jeu:
 
         #Load save UI
 
-        self.save1_btn = Button(self.screen,25,100,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),borderThickness = 5,borderColour= (255,255,255),text= None ,onClick= lambda: self.start_save(self.save1_btn))
-        self.save2_btn = Button(self.screen,25,225,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255))
-        self.save3_btn = Button(self.screen,25,350,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255))
-        self.save4_btn = Button(self.screen,25,475,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255))
-        self.save5_btn = Button(self.screen,25,600,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255))
-        self.save6_btn = Button(self.screen,25,725,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255))
+        self.save1_btn = Button(self.screen,25,100,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),borderThickness = 5,borderColour= (255,255,255),text= None ,onClick= lambda: self.start_save(0))
+        self.save2_btn = Button(self.screen,25,225,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(1))
+        self.save3_btn = Button(self.screen,25,350,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(2))
+        self.save4_btn = Button(self.screen,25,475,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(3))
+        self.save5_btn = Button(self.screen,25,600,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(4))
+        self.save6_btn = Button(self.screen,25,725,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(5))
         self.next_saves_btn = Button(self.screen,810,890,150,70,inactiveColour = (20,20,20), hoverColour = (70,70,70),text="Next",textColour=(255,255,255))
-
+        self.saves_list = []
         #Text UI
 
         #Main UI
@@ -264,44 +264,46 @@ class Jeu:
         pg.font.init()
         self.screen.fill((0,0,0))
         self.next_saves_btn.show()
-        saves_list = []
+        
         saves_num = Gameobjects.Toolbox.get_last_id('joueur')
         print(saves_num)
         for i in range(saves_num+1):
             print(saves_num,saves_num-i)
             e = Gameobjects.Toolbox.get('nom','joueur','id_joueur',saves_num-i)
             print(e)
-            saves_list.append(e)
-        already_displayed = []
-        for i in range(len(self.ls_widgets)):
+            self.saves_list.append(e)
+        self.saves_list.reverse()
+        for i in range(-1,len(self.ls_widgets)):
             self.ls_widgets[i].show()
-            self.ls_widgets[i].setText(saves_list[i] if i < len(saves_list)else "")
+            self.ls_widgets[i].setText(self.saves_list[i] if i < len(self.saves_list)else "")
             print(self.ls_widgets[i].get('text'))
-        print(saves_list)
+        print(self.saves_list)
 
-    def start_save(self,btn):
+    def start_save(self,btn_id):
         #self.player = Gameobjects.Joueur(Gameobjects.Toolbox.get('id','joueur','joueur.nom',btn.text))
         #print(self.player)
         #self.launch_new_win(self.text_list,self.text_ui())
-        print(btn.get('text'))
+        self.player = Gameobjects.Joueur(btn_id)
+        print(self.player.nom)
+        self.next_saves_btn.hide()
         self.launch_new_win(self.main_widgets,self.main_ui())
 
     def text_ui(self,text):
         #Image part:
-        image = pg.image.load(f"./assets/pics_{self.player.zone_infos[1]}s/{self.player.zone_infos[1]}")
+        image = pg.image.load(f"./assets/pics_{self.player.zone_infos[1]}s/{self.player.zone_infos[2]}")
 
         self.screen.blit(image,(0,0))
         current_text  = 0
         for i in range(len(text[current_text])-1):
-            text_shown = self.text.render(text[current_text][i],True,(255,255,255))
+            text_shown = text.render(text[current_text][i],True,(255,255,255))
             self.screen.blit(text_shown,(15,self.halfline + 25+(i*50))) 
 
     def main_ui(self):
         pg.font.init()
         
-        background=pg.image.load("./assets/menu.png")
+        background=pg.image.load(f"./assets/pics_towns/town2.png")
         self.screen.blit(background,(0,0))
-
+        print(self.player.zone_infos)
         pg.draw.rect(self.screen,(0,0,0),(2,self.halfline+2,self.w-4,self.halfline-4))
         pg.draw.rect(self.screen,(255,255,255),(0,self.halfline,self.w,self.halfline),width=2)
 
