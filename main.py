@@ -63,7 +63,7 @@ class Jeu:
         self.create_btn = Button(self.screen,self.halfline-40,900,175,40,colour=(175,35,35),text="Create Character",textColour=(255,255,255),onClick= lambda: update_db.tools.create_player((Gameobjects.Toolbox.get_last_id('joueur')+1),self.args[0],self.args[1],self.args[2],10,0,1,self.stats[0],self.stats[1],self.stats[2],self.stats[3],self.stats[4],self.stats[5],0,0,0,False))
 
         #Load save UI
-
+        
         self.save1_btn = Button(self.screen,25,100,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),borderThickness = 5,borderColour= (255,255,255),text= None ,onClick= lambda: self.start_save(0))
         self.save2_btn = Button(self.screen,25,225,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(1))
         self.save3_btn = Button(self.screen,25,350,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),text= None,borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.start_save(2))
@@ -79,9 +79,12 @@ class Jeu:
         self.combat_btn = Button(self.screen,510,550,400,100,text="Combat",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.c_widgets,self.combat_ui()))
         self.interact_btn = Button(self.screen,50,750,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.i_widgets,self.interact_ui()))
         self.inventory_btn = Button(self.screen,510,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui()))
-
-
-
+       
+        self.attack_btn = Button(self.screen,510,750,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a_widgets,self.attack_ui()))
+        self.interact_btn = Button(self.screen,510,750,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.int_widgets,self.interact_ui()))
+        self.inventory2_btn = Button(self.screen,510,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.inv_widgets,self.inventory_ui()))
+        self.flee_btn = Button(self.screen,510,750,400,100,text="Flee",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.f_widgets,self.flee_ui()))
+        
         #Hiding the widgets so that they are only displayed if they should
         self.new_save_btn.hide()
         self.load_save_btn.hide()
@@ -114,15 +117,21 @@ class Jeu:
         self.interact_btn.hide()
         self.inventory_btn.hide()  
 
+        self.attack_btn.hide()
+        self.interact_btn.hide()
+        self.inventory2_btn.hide()
+        self.flee_btn.hide()
+
         self.args = []
         self.menu_widgets = [self.new_save_btn,self.load_save_btn]
         self.ns_widgets = [self.chara_name,self.espece,self.classe,self.spec_btn,self.cla_btn,self.create_btn,self.cla_btn,self.str_txt,self.agi_txt,self.cha_txt,self.dex_txt,self.int_txt,self.end_txt,self.stat_btn]
         self.ls_widgets = [self.save1_btn,self.save2_btn,self.save3_btn,self.save4_btn,self.save5_btn,self.save6_btn]
         self.text_list = []
         self.main_widgets = [self.change_zone_btn,self.combat_btn,self.interact_btn,self.inventory_btn]
+        self.combat_list = [self.attack_btn,self.interact_btn,self.inventory2_btn,self.flee_btn]
 
 
-        self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets,self.main_widgets]
+        self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets,self.main_widgets,self.combat_list]
 
         self.ui = self.menu_ui()
         #self.quit_btn = Button(">Quit", 10, 890, 150, 70,self.screen)
@@ -309,8 +318,11 @@ class Jeu:
 
         for e in self.main_widgets:
             e.show()
-#============================================================================================================================================================#
 
+    def combat_ui(self):
+        for e in self.combat-list:
+            e.show()
+#============================================================================================================================================================#
     def run_game(self):
 
         self.running = True
