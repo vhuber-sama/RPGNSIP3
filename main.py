@@ -1,3 +1,4 @@
+
 import pygame as pg 
 #import init
 import os
@@ -42,7 +43,7 @@ class Jeu:
         
         #Main page UI
         self.new_save_btn = Button(self.screen,self.w//2-125,self.halfline + 125,256,40,text="New save",textColour=(255,255,255),inactiveColour = (120,0,0),onClick= lambda:self.launch_new_win(self.ns_widgets,self.new_save_ui()))
-        self.load_save_btn = Button( self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0),onClick= lambda: self.launch_new_win(self.ls_widgets,self.load_save_ui()))
+        self.load_save_btn = Button(self.screen,self.w//2-125,self.halfline + 240, 256, 40,text="Load save",textColour=(255,255,255),inactiveColour = (0,0,0),onClick= lambda: self.launch_new_win(self.ls_widgets,self.load_save_ui()))
         
         #Character creation UI
         self.stats = []
@@ -305,7 +306,7 @@ class Jeu:
         print(saves_num)
         for i in range(saves_num+1):
             print(saves_num,saves_num-i)
-            e = Gameobjects.Toolbox.get('nom','joueur','id_joueur',saves_num-i)
+            e = Gameobjects.Toolbox.get('nom','joueur','id_joueur',saves_num-i)[0][0]
             print(e)
             self.saves_list.append(e)
         self.saves_list.reverse()
@@ -337,7 +338,7 @@ class Jeu:
     def main_ui(self):
         pg.font.init()
         
-        background=pg.image.load(Gameobjects.Toolbox.get('img_path','zone','id',self.player.zone.id))
+        background=pg.image.load(Gameobjects.Toolbox.get('img_path','zone','id',self.player.zone.id)[0][0])
         self.screen.blit(background,(0,0))
         print(self.player.zone_infos)
         pg.draw.rect(self.screen,(0,0,0),(2,self.halfline+2,self.w-4,self.halfline-4))
@@ -352,7 +353,7 @@ class Jeu:
 
 
         enemies = []
-        possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[0][4]}" """).fetchall()
+        possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[4]}" """).fetchall()
         print(possible_monstres)
         for _ in range(rd(1,5)):
             enemies.append(Gameobjects.Monstre(0))
@@ -367,15 +368,15 @@ class Jeu:
         for e in self.cz_widgets:
             e.show()
 
-        self.zone1_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][6]) if self.player.zone_infos[0][6] != self.player.zone else "")
-        self.zone2_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][7]) if self.player.zone_infos[0][7] != self.player.zone else "")
-        self.zone3_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][8]) if self.player.zone_infos[0][8] != self.player.zone else "")
-        self.zone4_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][9]) if self.player.zone_infos[0][9] != self.player.zone else "")
+        self.zone1_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[6])[0][0] if self.player.zone_infos[6] != self.player.zone.id else "")
+        self.zone2_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[7])[0][0] if self.player.zone_infos[7] != self.player.zone.id else "")
+        self.zone3_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[8])[0][0] if self.player.zone_infos[8] != self.player.zone.id else "")
+        self.zone4_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[9])[0][0] if self.player.zone_infos[9] != self.player.zone.id else "")
         
-        self.zone1_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][6],self.player)
-        self.zone2_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][7],self.player)
-        self.zone3_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][8],self.player)
-        self.zone4_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][9],self.player)
+        self.zone1_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[6],self.player)
+        self.zone2_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[7],self.player)
+        self.zone3_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[8],self.player)
+        self.zone4_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[9],self.player)
         
     def atk_ui(self):
         for e in self.atk_widgets:
