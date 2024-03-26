@@ -41,13 +41,19 @@ c.execute("""
     type TEXT,
 	nom TEXT,
 	niveau_recommande INT,
-	type_monstre TEXT
+	type_monstre TEXT,
+    img_path TEXT,
+    voisin1 INT,
+    voisin2 INT,
+    voisin3 INT,
+    voisin4 INT
     );
     """)
 
 c.execute("""
     CREATE TABLE IF NOT EXISTS monstre (
     id_monstre INTEGER PRIMARY KEY,
+    espece TEXT,
 	niveau INT,
 	hp INT,
 	force INT,
@@ -65,10 +71,13 @@ c.execute("""
     CREATE TABLE IF NOT EXISTS items (
     id_items INTEGER PRIMARY KEY,
     durabilite INT,
+    stat TEXT,
     effets TEXT,
+    spell TEXT,
     type TEXT,
     valeur_shop INT,
-    valeur_vente INT
+    valeur_vente INT,
+    img_path TEXT
     );
     """)
 
@@ -89,7 +98,8 @@ c.execute("""
 	id_pnj INT PRIMARY KEY,
 	nom TEXT,
 	espece TEXT,
-	interaction TEXT
+	interaction TEXT,
+    quetes TEXT
     );
     """)
 
@@ -99,6 +109,8 @@ c.execute("""
 	id_pnj INT,
     type_quete TEXT,
     description_quete TEXT,
+    conditions TEXT,
+    triggers TEXT,
 	FOREIGN KEY (id_pnj) REFERENCES pnj (id_pnj)
     );
     """)
@@ -126,4 +138,3 @@ c.execute("""
 
 
 # ---------------------------------------------- fin SQL --------------------------------------------#
-
