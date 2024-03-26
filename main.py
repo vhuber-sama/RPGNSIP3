@@ -82,7 +82,7 @@ class Jeu:
        
         #Combat UI
         self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.launch_new_win(self.atk_widgets,self.atk_ui()))
-        self.interact2_btn = Button(self.screen,510,550,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
+        self.interact2_btn = Button(self.screen,510,550,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick=lambda:self.launch_new_win(self.text_list,self.text_ui('text')))
         self.inventory2_btn = Button(self.screen,50,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
         self.flee_btn = Button(self.screen,510,750,400,100,text="Flee",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
         
