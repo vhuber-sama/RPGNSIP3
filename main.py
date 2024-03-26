@@ -76,25 +76,30 @@ class Jeu:
 
         #Main UI
         self.change_zone_btn = Button(self.screen,50,550,400,100,text="Change zone",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.cz_widgets,self.change_zone_ui()))
-        self.combat_btn = Button(self.screen,510,550,400,100,text="Combat",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.c_widgets,self.combat_ui()))
+        self.combat_btn = Button(self.screen,510,550,400,100,text="Combat",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.combat_widgets,self.combat_ui()))
         self.interact_btn = Button(self.screen,50,750,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.i_widgets,self.interact_ui()))
         self.inventory_btn = Button(self.screen,510,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui()))
        
-        self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a_widgets,self.attack_ui()))
-        self.interact_btn = Button(self.screen,510,750,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.int_widgets,self.interact_ui()))
-        self.inventory2_btn = Button(self.screen,50,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.inv_widgets,self.inventory_ui()))
-        self.flee_btn = Button(self.screen,510,750,400,100,text="Flee",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.f_widgets,self.flee_ui()))
+        #Combat UI
+        self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.launch_new_win(self.atk_widgets,self.atk_ui()))
+        self.interact2_btn = Button(self.screen,510,550,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
+        self.inventory2_btn = Button(self.screen,50,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
+        self.flee_btn = Button(self.screen,510,750,400,100,text="Flee",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
+        
+        #Change zone UI
+        self.zone1_btn = Button(self.screen,50,550,400,100,text='',textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: print('new zone'))
+        self.zone2_btn = Button(self.screen,510,550,400,100,text="Zone2",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:print('new zone'))
+        self.zone3_btn = Button(self.screen,50,750,400,100,text="Zone3",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:print('new zone'))
+        self.zone4_btn = Button(self.screen,510,750,400,100,text="Zone4",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:print('new zone'))
+        self.confirm_btn = Button(self.screen,425,880,150,70,text="Confirm",textColour=(255,255,255),inactiveColour=(190,0,0),onClick= lambda: self.launch_new_win(self.main_widgets,self.main_ui()))
 
-        self.zone1_btn = Button(self.screen,50,550,400,100,text="Zone1",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.z1_widgets,self.zone1_ui()))
-        self.zone2_btn = Button(self.screen,510,750,400,100,text="Zone2",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.z2_widgets,self.zone2_ui()))
-        self.zone3_btn = Button(self.screen,50,750,400,100,text="Zone3",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.z3_widgets,self.zone3_ui()))
-        self.zone4_btn = Button(self.screen,510,750,400,100,text="Zone4",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.z4_widgets,self.zone4_ui()))
-
+        #Attack UI
         self.attack1_btn = Button(self.screen,50,550,400,100,text="Attack1",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a1_widgets,self.attack1_ui()))
-        self.attack2_btn = Button(self.screen,510,750,400,100,text="Attack2",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a2_widgets,self.attack2_ui()))
+        self.attack2_btn = Button(self.screen,510,550,400,100,text="Attack2",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a2_widgets,self.attack2_ui()))
         self.attack3_btn = Button(self.screen,50,750,400,100,text="Attack3",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a3_widgets,self.attack3_ui()))
         self.attack4_btn = Button(self.screen,510,750,400,100,text="Attack4",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.a4_widgets,self.attack4_ui()))
         
+
         #Hiding the widgets so that they are only displayed if they should
         self.new_save_btn.hide()
         self.load_save_btn.hide()
@@ -128,7 +133,7 @@ class Jeu:
         self.inventory_btn.hide()  
 
         self.attack_btn.hide()
-        self.interact_btn.hide()
+        self.interact2_btn.hide()
         self.inventory2_btn.hide()
         self.flee_btn.hide()
 
@@ -136,24 +141,24 @@ class Jeu:
         self.zone2_btn.hide()
         self.zone3_btn.hide()
         self.zone4_btn.hide()
+        self.confirm_btn.hide()
 
         self.attack1_btn.hide()
         self.attack2_btn.hide()
         self.attack3_btn.hide()
         self.attack4_btn.hide()
 
-        self.args = []
+        self.args = ['']
         self.menu_widgets = [self.new_save_btn,self.load_save_btn]
         self.ns_widgets = [self.chara_name,self.espece,self.classe,self.spec_btn,self.cla_btn,self.create_btn,self.cla_btn,self.str_txt,self.agi_txt,self.cha_txt,self.dex_txt,self.int_txt,self.end_txt,self.stat_btn]
         self.ls_widgets = [self.save1_btn,self.save2_btn,self.save3_btn,self.save4_btn,self.save5_btn,self.save6_btn]
         self.text_list = []
         self.main_widgets = [self.change_zone_btn,self.combat_btn,self.interact_btn,self.inventory_btn]
-        self.combat_list = [self.attack_btn,self.interact_btn,self.inventory2_btn,self.flee_btn]
-        self.zone_chg = [self.zone1_btn,self.zone2_btn,self.zone3_btn,self.zone4_btn]
-        self.attack_choix = [self.attack1_btn,self.attack2_btn,self.attack3_btn,self.attack4_btn]
+        self.combat_widgets = [self.attack_btn,self.interact2_btn,self.inventory2_btn,self.flee_btn]
+        self.cz_widgets = [self.zone1_btn,self.zone2_btn,self.zone3_btn,self.zone4_btn,self.confirm_btn]
+        self.atk_widgets = [self.attack1_btn,self.attack2_btn,self.attack3_btn,self.attack4_btn]
 
-
-        self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets,self.main_widgets,self.combat_list,self.zones_list,self.attack_choix]
+        self.uis_list = [self.menu_widgets,self.ls_widgets,self.ns_widgets,self.main_widgets,self.combat_widgets,self.cz_widgets,self.atk_widgets]
 
         self.ui = self.menu_ui()
         #self.quit_btn = Button(">Quit", 10, 890, 150, 70,self.screen)
@@ -202,7 +207,7 @@ class Jeu:
 
     def txtbox_to_str(self,textbox,var):
         var = textbox.getText()
-        self.args.append(var) 
+        self.args[0] = var 
 
     def confirm_choice(self,drop):
         print(f'added{drop.getSelected()} to {self.args}')
@@ -332,7 +337,7 @@ class Jeu:
     def main_ui(self):
         pg.font.init()
         
-        background=pg.image.load(f"./assets/pics_towns/town2.png")
+        background=pg.image.load(Gameobjects.Toolbox.get('img_path','zone','id',self.player.zone.id))
         self.screen.blit(background,(0,0))
         print(self.player.zone_infos)
         pg.draw.rect(self.screen,(0,0,0),(2,self.halfline+2,self.w-4,self.halfline-4))
@@ -342,16 +347,40 @@ class Jeu:
             e.show()
 
     def combat_ui(self):
-        for e in self.combat_list:
+        pg.draw.rect(self.screen,(0,0,0),(2,self.halfline+2,self.w-4,self.halfline-4))
+        pg.draw.rect(self.screen,(255,255,255),(0,self.halfline,self.w,self.halfline),width=2)
+
+
+        enemies = []
+        possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[0][4]}" """).fetchall()
+        print(possible_monstres)
+        for _ in range(rd(1,5)):
+            enemies.append(Gameobjects.Monstre(0))
+
+        enemy = pg.image.load("./assets/textures/Gobelin.png")
+        self.screen.blit(enemy,(0,-32))
+
+        for e in self.combat_widgets:
             e.show()
-            
-    def change_zone(self):
-        for e in self.zone_chg:
+        
+    def change_zone_ui(self):
+        for e in self.cz_widgets:
             e.show()
 
-    def attack(self):
-        for e in self.attack_choix:
+        self.zone1_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][6]) if self.player.zone_infos[0][6] != self.player.zone else "")
+        self.zone2_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][7]) if self.player.zone_infos[0][7] != self.player.zone else "")
+        self.zone3_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][8]) if self.player.zone_infos[0][8] != self.player.zone else "")
+        self.zone4_btn.setText(Gameobjects.Toolbox.get('nom','zone','id',self.player.zone_infos[0][9]) if self.player.zone_infos[0][9] != self.player.zone else "")
+        
+        self.zone1_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][6],self.player)
+        self.zone2_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][7],self.player)
+        self.zone3_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][8],self.player)
+        self.zone4_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[0][9],self.player)
+        
+    def atk_ui(self):
+        for e in self.atk_widgets:
             e.show()
+
 #============================================================================================================================================================#
     def run_game(self):
 
@@ -379,16 +408,16 @@ class Jeu:
             pg.display.update()
 
    
-player = Gameobjects.Joueur(0)
+#player = Gameobjects.Joueur(0)
 
 jeu = Jeu(960,960)
 jeu.run_game()
 print('Game terminated')
-
+"""
 print(player.zone , player.zone_infos)
 player.change_zone(2)
 print(player.zone , player.zone_infos)
-
+"""
 #print(type(jeu.texte_tuto))
 #print(adapte_texte(texte_tuto))
 #print(len("abitude quand vous rentrez de mission, vous vous dirigez vers l'auberge, dans laquelle vous entrez."))
