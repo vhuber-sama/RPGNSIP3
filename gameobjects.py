@@ -27,8 +27,13 @@ class Toolbox:
             c.execute(f"SELECT MAX(id_{table}) FROM {table}")
         else:
             c.execute(f"SELECT MAX(id) FROM {table}")
-        return c.fetchall()[0][0]
-    
+
+        ans = c.fetchall()[0]
+        if len(ans) == 0:
+            return 0
+        else:
+            return ans[0]
+
 class Joueur(Toolbox):
     def __init__(self,id_joueur):
         self.id_joueur = id_joueur
@@ -46,15 +51,15 @@ class Joueur(Toolbox):
         self.reputation = self.get("reputation","joueur","id_joueur",self.id_joueur)
         self.monnaie = self.get("monnaie","joueur","id_joueur",self.id_joueur)
         self.gway = False
-        self.zone = self.get("current_zone","joueur","id_joueur",self.id_joueur)
-        self.zone_infos = self.link("zone","zone.id",self.zone)
+        self.zone = Zone(self.get("current_zone","joueur","id_joueur",self.id_joueur))
+        self.zone_infos = self.link("zone","zone.id",self.zone.id)
         self.inventaire = Inventaire(self.id_joueur)
 
     
 
     def change_zone(self,new_zone):
-        self.zone = new_zone
-        self.zone_infos = self.link("zone","zone.id",self.zone)
+        self.zone = Zone(new_zone)
+        self.zone_infos = self.link("zone","zone.id",self.zone.id)
 
     def set_action(self,action):
         self.action = action
@@ -106,9 +111,17 @@ class Zone(Toolbox):
         self.nom = self.get("nom","zone","id",self.id)
         self.niveau = self.get("niveau_recommande","zone","id",self.id)
         self.type_monstre = self.get("type_monstre","zone","id",self.id)
-
+        self.voisins = [self.get('voisin1',"zone","id",self.id),self.get('voisin2',"zone","id",self.id),self.get('voisin3',"zone","id",self.id),self.get('voisin4',"zone","id",self.id)]
     
-
+    def get_to_neighbour(self,v,p: Joueur):
+        self.id = v
+        self.type = self.get("type","zone","id",self.id)
+        self.nom = self.get("nom","zone","id",self.id)
+        self.niveau = self.get("niveau_recommande","zone","id",self.id)
+        self.type_monstre = self.get("type_monstre","zone","id",self.id)
+        self.voisins = [self.get('voisin1',"zone","id",self.id),self.get('voisin2',"zone","id",self.id),self.get('voisin3',"zone","id",self.id),self.get('voisin4',"zone","id",self.id)]
+        p.change_zone(v)
+    
 class Item(Toolbox):
     def __init__(self,id_item):
         self.id_item = id_item
@@ -157,10 +170,15 @@ class Quete(Toolbox):
         self.description = self.get("description_quete","quete","id_quete",self.id_quete)
 
 tool = Toolbox()
+"""
+
 #print(tool.get_last_id("joueur"))
 #tool.set('joueur','current_zone',0,'id_joueur',0)
-"""
+
 player = Joueur(0)
 player.set_action("attack")
 player.combat([Monstre(0)])
-#print(player.hp)"""
+print(player.hp)
+#""
+tool.set('zone','voisin2',2,'id',0)
+tool.set('zone','voisin2',2,'id',1)"""
