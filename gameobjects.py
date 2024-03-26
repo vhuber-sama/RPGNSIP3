@@ -1,3 +1,4 @@
+
 import sqlite3
 from random import randint
 connexion = sqlite3.connect('nom.db')
@@ -213,7 +214,7 @@ player.inventaire.get_equipe()
 print(player.inventaire.id_items ,' | ', player.inventaire.qt,' | ',player.inventaire.equipe)
 print(player.inventaire.is_equiped())
 
-#tool.set('zone','voisin2',2,'id',0)
+#tool.set('zone','img_path',"'./assets/pics_forests/forest1.png'",'id',2)
 #tool.set('zone','voisin2',2,'id',1)
 
 #"""
