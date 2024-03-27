@@ -81,6 +81,7 @@ class Jeu:
         self.inventory_btn = Button(self.screen,510,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui()))
        
         #Combat UI
+        self.enemies = None #I have no enemies
         self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.launch_new_win(self.atk_widgets,self.atk_ui([])))
         self.interact2_btn = Button(self.screen,510,550,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick=lambda:self.launch_new_win(self.text_list,self.text_ui('text')))
         self.inventory2_btn = Button(self.screen,50,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
@@ -136,6 +137,7 @@ class Jeu:
         self.interact2_btn.hide()
         self.inventory2_btn.hide()
         self.flee_btn.hide()
+
 
         self.zone1_btn.hide()
         self.zone2_btn.hide()
@@ -334,7 +336,7 @@ class Jeu:
 
     def text_ui(self,text):
         #Image part:
-        image = pg.image.load(f"./assets/pics_{self.player.zone_infos[1]}s/{self.player.zone_infos[2]}")
+        image = pg.image.load(self.player.img_path)
 
         self.screen.blit(image,(0,0))
         current_text  = 0
@@ -358,22 +360,34 @@ class Jeu:
         pg.draw.rect(self.screen,(0,0,0),(2,self.halfline+2,self.w-4,self.halfline-4))
         pg.draw.rect(self.screen,(255,255,255),(0,self.halfline,self.w,self.halfline),width=2)
 
-
-        enemies = []
-        possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[4]}" """).fetchall()
-        print(possible_monstres)
-        for _ in range(rd(1,5)):
-            enemies.append(Gameobjects.Monstre(possible_monstres[0][rd(0,len(possible_monstres)-1)]))
-        
+        if self.enemies == None or self.enemies == []:
+            self.enemies = []
+            possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[4]}" """).fetchall()
+            #print(possible_monstres)
+            for _ in range(rd(1,5)):
+                self.enemies.append(Gameobjects.Monstre(possible_monstres[0][rd(0,len(possible_monstres)-1)]))
+            
         enemy = pg.image.load("./assets/textures/Gobelin.png")
         self.screen.blit(enemy,(0,-32))
 
         for e in self.combat_widgets:
             e.show()
         
-        self.flee_btn.onClick = lambda: self.player.set_action('flee',enemies)
-        self.attack_btn.onClick =lambda: self.launch_new_win(self.atk_widgets,self.atk_ui(enemies))
+        self.flee_btn.onClick = lambda: self.player.set_action('flee',self.enemies)
+        self.attack_btn.onClick =lambda: self.launch_new_win(self.atk_widgets,self.atk_ui(self.enemies))
         
+        text = f"{self.enemies[0].espece}'s hp: {self.enemies[0].hp}"
+        rdtext = self.font.render(text,1,(255,0,0))
+        self.screen.blit(rdtext,(25,25))
+
+        textHP = f"Your hp: {self.player.hp}"
+        rdtextHP = self.font.render(textHP,1,(255,0,0))
+        self.screen.blit(rdtextHP,(800,25))
+
+        textNumEn = f"Number of enemies : {len(self.enemies)}"
+        rdtextNumEn = self.font.render(textNumEn,1,(255,0,0))
+        self.screen.blit(rdtextNumEn,(25,75))
+
     def change_zone_ui(self):
         for e in self.cz_widgets:
             e.show()
@@ -403,6 +417,9 @@ class Jeu:
         self.attack4_btn.onClick = lambda: self.player.set_action('attack',enemies)
         self.attack4_btn.setText(Gameobjects.Item(self.player.inventaire.is_equiped()[3]).spell if len(self.player.inventaire.is_equiped()) >= 4 else "")
 
+        
+        #self.launch_new_win(self.combat_widgets,self.combat_ui(enemies)) <-- Must be run once attacked
+            
     def devmod(self):
         """
         An easter egg function
@@ -440,6 +457,7 @@ class Jeu:
         while self.running:
             events = pg.event.get()
             for event in events:
+                    print(event)
                     if event.type == pg.QUIT :#if we click on the cross to close the game
                         self.running = False #closes the loop that keeps the game running
                         pg.quit()
@@ -450,7 +468,7 @@ class Jeu:
         
             self.clock.tick(60)
                   
-            quit_btn = Button(self.screen, 10, 890, 150, 70,text="Quit",textColour=(255,255,255),inactiveColour = (125,0,0),hoverColour= (255,0,0),onClick=lambda: pg.quit())
+            quit_btn = Button(self.screen, 10, 890, 150, 70,text="Quit",textColour=(255,255,255),inactiveColour = (125,0,0),hoverColour= (255,0,0),onClick=lambda: exit())
 
             pw.update(events)
             #print(pg.mouse.get_pos()[0],pg.mouse.get_pos()[1])
@@ -459,6 +477,13 @@ class Jeu:
                 if self.player.action == 'flee':
                     self.launch_new_win(self.main_widgets,self.main_ui())
                     self.player.action = None
+                if self.player.action == 'attack':
+                    self.launch_new_win(self.combat_widgets,self.combat_ui())
+                    self.player.action = None
+                
+                if not self.player.is_fighting:
+                    self.launch_new_win(self.main_widgets,self.main_ui())
+                    self.player.is_fighting = True
             pg.display.update()
 
 
