@@ -8,6 +8,7 @@ class Toolbox:
 
     @staticmethod
     def get(valtoget,fromwhere,id_to_check,object_id):
+        print(f"SELECT {valtoget} FROM {fromwhere} WHERE {id_to_check} = {object_id}")
         c.execute(f"SELECT {valtoget} FROM {fromwhere} WHERE {id_to_check} = {object_id}")
         result = c.fetchall()
         return result
@@ -55,64 +56,70 @@ class Joueur(Toolbox):
         self.zone = Zone(self.get("current_zone","joueur","id_joueur",self.id_joueur)[0][0])
         self.zone_infos = self.get_all("zone","zone.id",self.zone.id)[0]
         self.inventaire = Inventaire(self.id_joueur)
-
+        self.action = None
     
 
     def change_zone(self,new_zone):
         self.zone = Zone(new_zone)
-        self.zone_infos = self.get_all("zone","zone.id",self.zone.id)
+        self.zone_infos = self.get_all("zone","zone.id",self.zone.id)[0]
+        print(self.zone_infos)
 
-    def set_action(self,action):
+    def set_action(self,action,monsters):
         self.action = action
+        self.combat_turn(monsters)
 
     def combat_turn(self,monsters):
         is_playturn = True
+        for e in monsters:
+            print(e.espece)
         if is_playturn :
             if self.action == 'attack':
                 diceroll = randint(1,20)
                 #Must combine : the appropriate stat + the spell buff. case match ? 
-                monsters[0].hp -= 1 #self.stats[self.inventaire]
-                print(f"You rolled a {diceroll}, dealing {int((self.stats['STR']+eval(Item(self.inventaire.id_items[0]).eff))*(0.1*diceroll))} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
+                monsters[0].hp -= int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))
+                print(f"You rolled a {diceroll}, dealing {int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
                 if monsters[0].hp <= 0:
                     print(f"you killed a {monsters[0].espece}, + {3 * (monsters[0].niveau%5)}xp")
                     self.xp += 3 * (monsters[0].niveau%5)
                     monsters.pop(0)
+                if len(monsters)>0:
+                    diceroll = randint(1,20)
+                    self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                    print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
+                    if self.hp <= 0:
+                        print("You died")
+                        exit(0)
+                    is_playturn = True
                     
             elif self.action == 'interact':
+                diceroll = randint(1,20)
+                self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
+                if self.hp <= 0:
+                    print("You died")
+                is_playturn = True
                 pass #will come back at that later. CF inventory
 
             elif self.action == 'inventory':
             ###Must make it access the ui funcs in class Jeu (but can't import it cause of circular import)
             #Make a graphical representation for marko
-                pass
+                diceroll = randint(1,20)
+                self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
+                if self.hp <= 0:
+                    print("You died")
+                is_playturn = True
 
             elif self.action == 'flee':
                 #if you flee, you will loose hp and not get rewards
                 self.hp // 2
                 while len(monsters)>0:
                     monsters.pop()
+                print(f'you fled and lost hp on the way, reducing your health to {self.hp}')
                 
 
-            is_playturn = False
 
-        elif not is_playturn:
-            diceroll = randint(1,20)
-            self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
-            print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
-            if self.hp <= 0:
-                print("You died")
-            is_playturn = True
 
-    def combat(self,monsters : list):
-        for e in monsters:
-            assert type(e) == Monstre
-   
-        while self.hp >= 0 and len(monsters)>0:
-            #print(f"fight: player hp: {self.hp}, monster hp: {monsters[0].hp}")
-
-            ###Must make it so that the button intervenes now
-            #Make a graphical representation for marko
-            self.combat_turn(monsters)            
             
 
 class Monstre(Toolbox):
@@ -152,7 +159,9 @@ class Item(Toolbox):
     def __init__(self,id_item):
         self.id_item = id_item
         self.durab = self.get("durabilite","items","id_items",self.id_item)[0][0]
+        self.stat = self.get("stat",'items','id_items',self.id_item)[0][0]
         self.eff = self.get("effets","items","id_items",self.id_item)[0][0]
+        self.spell = self.get("spell",'items','id_items',self.id_item)[0][0]
         self.type = self.get("type","items","id_items",self.id_item)[0][0]
         self.val_shop = self.get("valeur_shop","items","id_items",self.id_item)[0][0]
         self.val_vente = self.get("valeur_vente","items","id_items",self.id_item)[0][0]
@@ -174,8 +183,8 @@ class Inventaire(Toolbox):
     def get_equipe(self):
         for i in range(len(self.id_items)):
             c.execute(f"SELECT equipe FROM inventaire WHERE id_joueur = {self.id_joueur} AND id_items= {self.id_items[i][0]}")
-            self.equipe[self.id_items[i][0]]=bool(c.fetchall())# if bool(c.fetchall()[0][i-1]) == True else self.id_items[i][0] == None
-
+            #print(c.fetchall())
+            self.equipe[self.id_items[i][0]]= True if c.fetchall() == [(1,)] else False
     def is_equiped(self):
         ans = []
         for e in self.equipe.keys():
@@ -214,7 +223,7 @@ player.inventaire.get_equipe()
 print(player.inventaire.id_items ,' | ', player.inventaire.qt,' | ',player.inventaire.equipe)
 print(player.inventaire.is_equiped())
 
-#tool.set('zone','img_path',"'./assets/pics_forests/forest1.png'",'id',2)
-#tool.set('zone','voisin2',2,'id',1)
 
+#tool.set('inventaire','equipe',False,'id_items',1)
+#tool.set('inventaire','equipe',True,'id_items',0)
 #"""
