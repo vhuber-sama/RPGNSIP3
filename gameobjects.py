@@ -8,7 +8,7 @@ class Toolbox:
 
     @staticmethod
     def get(valtoget,fromwhere,id_to_check,object_id):
-        print(f"SELECT {valtoget} FROM {fromwhere} WHERE {id_to_check} = {object_id}")
+        #print(f"SELECT {valtoget} FROM {fromwhere} WHERE {id_to_check} = {object_id}")
         c.execute(f"SELECT {valtoget} FROM {fromwhere} WHERE {id_to_check} = {object_id}")
         result = c.fetchall()
         return result
@@ -57,7 +57,7 @@ class Joueur(Toolbox):
         self.zone_infos = self.get_all("zone","zone.id",self.zone.id)[0]
         self.inventaire = Inventaire(self.id_joueur)
         self.action = None
-    
+        self.is_fighting = True
 
     def change_zone(self,new_zone):
         self.zone = Zone(new_zone)
@@ -65,58 +65,65 @@ class Joueur(Toolbox):
         print(self.zone_infos)
 
     def set_action(self,action,monsters):
+        self.is_fighting = True
         self.action = action
         self.combat_turn(monsters)
 
     def combat_turn(self,monsters):
+
         is_playturn = True
         for e in monsters:
             print(e.espece)
-        if is_playturn :
-            if self.action == 'attack':
-                diceroll = randint(1,20)
-                #Must combine : the appropriate stat + the spell buff. case match ? 
-                monsters[0].hp -= int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))
-                print(f"You rolled a {diceroll}, dealing {int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
-                if monsters[0].hp <= 0:
-                    print(f"you killed a {monsters[0].espece}, + {3 * (monsters[0].niveau%5)}xp")
-                    self.xp += 3 * (monsters[0].niveau%5)
-                    monsters.pop(0)
-                if len(monsters)>0:
+        if len(monsters) >0:
+            if is_playturn :
+                if self.action == 'attack':
+                    diceroll = randint(1,20)
+                    #Must combine : the appropriate stat + the spell buff. case match ? 
+                    monsters[0].hp -= int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))
+                    print(f"You rolled a {diceroll}, dealing {int(self.stats[Item(self.inventaire.is_equiped()[0]).stat]+(eval(Item(self.inventaire.is_equiped()[0]).eff))*(0.1*diceroll))} damage to the {monsters[0].espece}, lowering its hp to: {monsters[0].hp}")
+                    if monsters[0].hp <= 0:
+                        print(f"you killed a {monsters[0].espece}, + {3 * (monsters[0].niveau%5)}xp")
+                        self.xp += 3 * (monsters[0].niveau%5)
+                        monsters.pop(0)
+
+                    if len(monsters)>0:
+                        diceroll = randint(1,20)
+                        self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                        print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
+                        if self.hp <= 0:
+                            print("You died")
+                            exit(0)
+                        is_playturn = True
+                    else:
+                        self.is_fighting = False
+                elif self.action == 'interact':
                     diceroll = randint(1,20)
                     self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
                     print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
                     if self.hp <= 0:
                         print("You died")
-                        exit(0)
                     is_playturn = True
-                    
-            elif self.action == 'interact':
-                diceroll = randint(1,20)
-                self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
-                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
-                if self.hp <= 0:
-                    print("You died")
-                is_playturn = True
-                pass #will come back at that later. CF inventory
+                    pass #will come back at that later. CF inventory
 
-            elif self.action == 'inventory':
-            ###Must make it access the ui funcs in class Jeu (but can't import it cause of circular import)
-            #Make a graphical representation for marko
-                diceroll = randint(1,20)
-                self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
-                print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
-                if self.hp <= 0:
-                    print("You died")
-                is_playturn = True
+                elif self.action == 'inventory':
+                ###Must make it access the ui funcs in class Jeu (but can't import it cause of circular import)
+                #Make a graphical representation for marko
+                    diceroll = randint(1,20)
+                    self.hp -= int(monsters[0].stats['STR']*(0.1*diceroll))
+                    print(f"{monsters[0].espece} rolled a {diceroll}, dealing {int(monsters[0].stats['STR']*(0.1*diceroll))} damage to you, lowering your hp to: {self.hp}")
+                    if self.hp <= 0:
+                        print("You died")
+                    is_playturn = True
 
-            elif self.action == 'flee':
-                #if you flee, you will loose hp and not get rewards
-                self.hp // 2
-                while len(monsters)>0:
-                    monsters.pop()
-                print(f'you fled and lost hp on the way, reducing your health to {self.hp}')
-                
+                elif self.action == 'flee':
+                    #if you flee, you will loose hp and not get rewards
+                    self.hp // 2
+                    while len(monsters)>0:
+                        monsters.pop()
+                    print(f'you fled and lost hp on the way, reducing your health to {self.hp}')
+        else:
+            self.is_fighting = False
+                                
 
 
 
@@ -145,7 +152,7 @@ class Zone(Toolbox):
         self.niveau = self.get("niveau_recommande","zone","id",self.id)[0][0]
         self.type_monstre = self.get("type_monstre","zone","id",self.id)[0][0]
         self.voisins = [self.get('voisin1',"zone","id",self.id)[0][0],self.get('voisin2',"zone","id",self.id)[0][0],self.get('voisin3',"zone","id",self.id)[0][0],self.get('voisin4',"zone","id",self.id)[0][0]]
-    
+        
     def get_to_neighbour(self,v,p: Joueur):
         self.id = v
         self.type = self.get("type","zone","id",self.id)[0][0]
