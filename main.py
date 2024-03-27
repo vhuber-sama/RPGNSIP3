@@ -61,8 +61,7 @@ class Jeu:
         self.int_txt = TextBox(self.screen,self.w//3,725,60,40,colour=(207,160,91),font=self.font)
         self.end_txt = TextBox(self.screen,self.halfline+200,725,60,40,colour=(207,160,91),font=self.font)
         self.stat_btn = Button(self.screen,self.halfline-40,775,175,40,colour=(200,20,20),name= "Confirm stats",textColour = (255,255,255),onClick= lambda:self.choose_stats())
-        self.create_btn = Button(self.screen,self.halfline-40,900,175,40,colour=(175,35,35),text="Create Character",textColour=(255,255,255),onClick= lambda: update_db.tools.create_player((Gameobjects.Toolbox.get_last_id('joueur')+1),self.args[0],self.args[1],self.args[2],10,0,1,self.stats[0],self.stats[1],self.stats[2],self.stats[3],self.stats[4],self.stats[5],0,0,0,False))
-
+        self.create_btn = Button(self.screen,self.halfline-40,900,175,40,colour=(175,35,35),text="Create Character",textColour=(255,255,255),onClick= lambda: self.create_char())
         #Load save UI
         
         self.save1_btn = Button(self.screen,25,100,920,100,inactiveColour = (20,20,20), hoverColour = (70,70,70),textColour= (255,255,255),borderThickness = 5,borderColour= (255,255,255),text= None ,onClick= lambda: self.start_save(0))
@@ -82,7 +81,7 @@ class Jeu:
         self.inventory_btn = Button(self.screen,510,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda:self.launch_new_win(self.in_widgets,self.inventory_ui()))
        
         #Combat UI
-        self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.launch_new_win(self.atk_widgets,self.atk_ui()))
+        self.attack_btn = Button(self.screen,50,550,400,100,text="Attack",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick= lambda: self.launch_new_win(self.atk_widgets,self.atk_ui([])))
         self.interact2_btn = Button(self.screen,510,550,400,100,text="Interact",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255),onClick=lambda:self.launch_new_win(self.text_list,self.text_ui('text')))
         self.inventory2_btn = Button(self.screen,50,750,400,100,text="Inventory",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
         self.flee_btn = Button(self.screen,510,750,400,100,text="Flee",textColour=(255,255,255),inactiveColour = (0,0,0),borderThickness = 5,borderColour= (255,255,255))
@@ -163,6 +162,8 @@ class Jeu:
 
         self.ui = self.menu_ui()
         #self.quit_btn = Button(">Quit", 10, 890, 150, 70,self.screen)
+        self.devmod_actions_list = ['K_UP','K_UP','K_DOWN','K_DOWN','K_LEFT','K_RIGHT','K_LEFT','K_RIGHT','K_b','K_a']
+            
 
     def adapte_text_v3(self,texte , nchar):
         texte = texte.split(';')
@@ -214,6 +215,11 @@ class Jeu:
         print(f'added{drop.getSelected()} to {self.args}')
         self.args.append(drop.getSelected())
     
+    def create_char(self):
+        update_db.tools.create_player((Gameobjects.Toolbox.get_last_id('joueur')+1),self.args[0],self.args[1],self.args[2],10,0,1,self.stats[0],self.stats[1],self.stats[2],self.stats[3],self.stats[4],self.stats[5],0,0,0,False)
+        self.player = Gameobjects.Joueur(Gameobjects.Toolbox.get_last_id('joueur'))
+        self.launch_new_win(self.main_widgets,self.main_ui())
+
     def launch_new_win(self,launched_list,launched):
         for l in self.uis_list:
             if l == launched_list:
@@ -221,7 +227,7 @@ class Jeu:
             else:
                 for e in l:
                     e.hide()
-                    print(f"hid {e}")
+                    #print(f"hid {e}")
         self.ui = launched
 
     def choose_stats(self):
@@ -321,6 +327,7 @@ class Jeu:
         #print(self.player)
         #self.launch_new_win(self.text_list,self.text_ui())
         self.player = Gameobjects.Joueur(btn_id)
+        self.player.inventaire.get_equipe()
         print(self.player.nom)
         self.next_saves_btn.hide()
         self.launch_new_win(self.main_widgets,self.main_ui())
@@ -356,13 +363,16 @@ class Jeu:
         possible_monstres = update_db.tools.c.execute(f"""SELECT id_monstre FROM monstre WHERE type = "{self.player.zone_infos[4]}" """).fetchall()
         print(possible_monstres)
         for _ in range(rd(1,5)):
-            enemies.append(Gameobjects.Monstre(0))
-
+            enemies.append(Gameobjects.Monstre(possible_monstres[0][rd(0,len(possible_monstres)-1)]))
+        
         enemy = pg.image.load("./assets/textures/Gobelin.png")
         self.screen.blit(enemy,(0,-32))
 
         for e in self.combat_widgets:
             e.show()
+        
+        self.flee_btn.onClick = lambda: self.player.set_action('flee',enemies)
+        self.attack_btn.onClick =lambda: self.launch_new_win(self.atk_widgets,self.atk_ui(enemies))
         
     def change_zone_ui(self):
         for e in self.cz_widgets:
@@ -378,9 +388,48 @@ class Jeu:
         self.zone3_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[8],self.player)
         self.zone4_btn.onClick = lambda: self.player.zone.get_to_neighbour(self.player.zone_infos[9],self.player)
         
-    def atk_ui(self):
+    def atk_ui(self,enemies):
         for e in self.atk_widgets:
             e.show()
+        self.attack1_btn.onClick = lambda: self.player.set_action('attack',enemies)
+        self.attack1_btn.setText(Gameobjects.Item(self.player.inventaire.is_equiped()[0]).spell if len(self.player.inventaire.is_equiped()) >= 1 else "")
+        
+        self.attack2_btn.onClick = lambda: self.player.set_action('attack',enemies)
+        self.attack2_btn.setText(Gameobjects.Item(self.player.inventaire.is_equiped()[1]).spell if len(self.player.inventaire.is_equiped()) >= 2 else "")
+
+        self.attack3_btn.onClick = lambda: self.player.set_action('attack',enemies)
+        self.attack3_btn.setText(Gameobjects.Item(self.player.inventaire.is_equiped()[2]).spell if len(self.player.inventaire.is_equiped()) >= 3 else "")
+
+        self.attack4_btn.onClick = lambda: self.player.set_action('attack',enemies)
+        self.attack4_btn.setText(Gameobjects.Item(self.player.inventaire.is_equiped()[3]).spell if len(self.player.inventaire.is_equiped()) >= 4 else "")
+
+    def devmod(self):
+        """
+        An easter egg function
+        """
+        for e in pg.event.get():
+            if e == pg.KEYDOWN:
+                if pg.K_UP:
+                    if 'K_UP' in self.devmod_actions_list and len(self.devmod_actions_list) == 10 or len(self.devmod_actions_list) == 9: 
+                        self.devmod_actions_list.pop(0)
+                if pg.K_DOWN:
+                    if 'K_DOWN' in self.devmod_actions_list and 'K_UP' not in self.devmod_actions_list and len(self.devmod_actions_list) == 8 or len(self.devmod_actions_list) == 7:
+                        self.devmod_actions_list.pop(0)
+                if pg.K_LEFT and (self.devmod_actions_list == ['K_LEFT','K_RIGHT','K_LEFT','K_RIGHT','K_b','K_a'] or self.devmod_actions_list == ['K_LEFT','K_RIGHT','K_b','K_a']):
+                    self.devmod_actions_list.pop(0)
+                if pg.K_RIGHT and (self.devmod_actions_list == ['K_RIGHT','K_LEFT','K_RIGHT','K_b','K_a'] or self.devmod_actions_list == ['K_RIGHT','K_b','K_a']):
+                    self.devmod_actions_list.pop(0)
+                if pg.K_b and len(self.devmod_actions_list) == 2:
+                    self.devmod_actions_list.pop(0)
+                if pg.K_a and len(self.devmod_actions_list) == 1:
+                    self.devmod_actions_list.pop(0)
+                
+
+        if len(self.devmod_actions_list) == 0:
+            print("You signed a pact with the devil")
+            self.player.hp = 666
+            self.player.stats['STR'] = 666
+
 
 #============================================================================================================================================================#
     def run_game(self):
@@ -405,8 +454,13 @@ class Jeu:
 
             pw.update(events)
             #print(pg.mouse.get_pos()[0],pg.mouse.get_pos()[1])
-
+            if self.player != None:
+                self.devmod()
+                if self.player.action == 'flee':
+                    self.launch_new_win(self.main_widgets,self.main_ui())
+                    self.player.action = None
             pg.display.update()
+
 
    
 #player = Gameobjects.Joueur(0)
